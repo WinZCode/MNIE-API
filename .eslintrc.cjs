@@ -6,7 +6,7 @@ module.exports = {
     ecmaVersion: 'latest',
     sourceType: 'module',
     requireConfigFile: false,
-    allowImportExportEverywhere: true,
+    allowImportExportEverywhere: true
   },
   plugins: [],
   rules: {
@@ -29,6 +29,6 @@ module.exports = {
     'keyword-spacing': 1,
     'comma-dangle': 1,
     'comma-spacing': 1,
-    'arrow-spacing': 1,
-  },
+    'arrow-spacing': 1
+  }
 }
