@@ -1,24 +1,30 @@
 import express from 'express'
-import { CONNECT_DB, GET_DB } from './config/mongodb'
-
+import exitHook from 'async-exit-hook'
+import { CONNECT_DB, CLOSE_DB } from './config/mongodb'
+import { env } from './config/environment'
 const START_SERVER = () => {
   const app = express()
-
-  const hostname = 'localhost'
-  const port = 8017
+  const port = Number(env.APP_PORT)
+  const host = env.APP_HOST || 'localhost'
 
   app.get('/', async (req, res) => {
-    console.log(await GET_DB().listCollections().toArray())
-
     res.end('<h1>Hello World!</h1><hr>')
   })
 
-  app.listen(port, hostname, () => {
-    console.log(`3. Hello , I am running at ${hostname}:${port}`)
+  app.listen(port, host, () => {
+    console.log(`3. Hello ${env.AUTHOR}, I am running at ${env.APP_HOST}:${env.APP_PORT}`)
+  })
+
+  // clean up sau khi đóng server
+  exitHook(() => {
+    console.log('4. Server is shutting down...')
+    CLOSE_DB()
+    console.log('5. Database disconnected!')
   })
 }
 
 // chỉ khi kết nối DB thành công mới chạy BE
+// IIFE
 ;(async () => {
   try {
     console.log('1. Connecting to database...')
