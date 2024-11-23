@@ -9,6 +9,10 @@ const START_SERVER = () => {
   const port = Number(env.APP_PORT)
   const host = env.APP_HOST || 'localhost'
 
+  // enable req.body json data
+  app.use(express.json())
+
+  // User api v1
   app.use('/v1', APIs_V1)
 
   app.listen(port, host, () => {

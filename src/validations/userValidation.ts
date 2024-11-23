@@ -1,0 +1,58 @@
+import Joi from 'joi'
+import { StatusCodes } from 'http-status-codes'
+
+/** Notes:
+ * Không cần phải custom message ở BE vì để FE tự custom cho đẹp
+ * BE chỉ cần validate chuẩn xác và trả về mess mặc định là dc
+ * valid dữ liệu bắt buộc phải có ở BE vì đây là điểm cuối để lưu trữ và DB
+ * Nên : Validate ở cả 2
+ */
+
+const createNew = async (req: any, res: any, next: any) => {
+  const correctCond = Joi.object({
+    // email: Joi.string().email().required().messages({
+    //   'string.email': 'Email không hợp lệ',
+    //   'any.required': 'Email là trường bắt buộc',
+    //   'string.empty': 'Email không được để trống'
+    // }),
+
+    username: Joi.string().min(3).max(30).required().trim().strict().messages({
+      'string.min': 'Username phải có ít nhất {#limit} ký tự',
+      'string.max': 'Username không được vượt quá {#limit} ký tự',
+      'any.required': 'Username là trường bắt buộc',
+      'string.empty': 'Username không được để trống'
+    }),
+
+    password: Joi.string()
+      .min(6)
+      .pattern(new RegExp('^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d)'))
+      .required()
+      .trim()
+      .strict()
+      .messages({
+        'string.min': 'Mật khẩu phải có ít nhất {#limit} ký tự',
+        'string.pattern.base': 'Mật khẩu phải chứa ít nhất 1 chữ hoa, 1 chữ thường và 1 số',
+        'any.required': 'Mật khẩu là trường bắt buộc',
+        'string.empty': 'Mật khẩu không được để trống'
+      })
+  })
+
+  try {
+    console.log('body', req.body)
+    // kiểm tra điều kiện validate khi gửi req lên
+    // abortEarly: trả về nhiều lỗi, tất cả lỗi nếu có
+    await correctCond.validateAsync(req.body, { abortEarly: false })
+    // next()
+    res.status(StatusCodes.CREATED).json({ message: 'Create user', code: StatusCodes.CREATED })
+  } catch (err: any) {
+    console.log(err)
+    // không thể thực thi 422
+    res.status(StatusCodes.UNPROCESSABLE_ENTITY).json({
+      errors: new Error(err).message
+    })
+  }
+}
+
+export const userValidation = {
+  createNew
+}
