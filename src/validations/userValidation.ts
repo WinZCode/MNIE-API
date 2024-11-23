@@ -10,12 +10,6 @@ import { StatusCodes } from 'http-status-codes'
 
 const createNew = async (req: any, res: any, next: any) => {
   const correctCond = Joi.object({
-    // email: Joi.string().email().required().messages({
-    //   'string.email': 'Email không hợp lệ',
-    //   'any.required': 'Email là trường bắt buộc',
-    //   'string.empty': 'Email không được để trống'
-    // }),
-
     username: Joi.string().min(3).max(30).required().trim().strict().messages({
       'string.min': 'Username phải có ít nhất {#limit} ký tự',
       'string.max': 'Username không được vượt quá {#limit} ký tự',
@@ -38,12 +32,12 @@ const createNew = async (req: any, res: any, next: any) => {
   })
 
   try {
-    console.log('body', req.body)
     // kiểm tra điều kiện validate khi gửi req lên
     // abortEarly: trả về nhiều lỗi, tất cả lỗi nếu có
     await correctCond.validateAsync(req.body, { abortEarly: false })
-    // next()
-    res.status(StatusCodes.CREATED).json({ message: 'Create user', code: StatusCodes.CREATED })
+
+    // validate hợp lệ thì cho dữ liệu đi tiếp sang controller
+    next()
   } catch (err: any) {
     console.log(err)
     // không thể thực thi 422
