@@ -1,13 +1,15 @@
 import { StatusCodes } from 'http-status-codes'
+import ApiError from '../utils/ApiError'
 
 const createNew = async (req: any, res: any, next: any) => {
-  res.status(StatusCodes.OK).json({ message: 'Create new user', code: StatusCodes.OK })
-
   try {
     console.log('body', req.body)
-    res.status(StatusCodes.CREATED).json({ message: 'Create user', code: StatusCodes.CREATED })
+    throw new ApiError(StatusCodes.BAD_REQUEST, 'Create user error')
+
+    // có kết quả thì trả về client
+    // res.status(StatusCodes.CREATED).json({ message: 'Create user', code: StatusCodes.CREATED })
   } catch (err: any) {
-    res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({ errors: err.message })
+    next(err)
   }
 }
 
@@ -18,3 +20,4 @@ export const userController = {
 //req.query: query string
 //req.params: route params
 //req.body: request body
+// điều hướng dữ liệu sang tầng service
