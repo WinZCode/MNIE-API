@@ -1,13 +1,14 @@
 import { StatusCodes } from 'http-status-codes'
 import ApiError from '../utils/ApiError'
+import { userService } from '../services/userService'
 
 const createNew = async (req: any, res: any, next: any) => {
   try {
-    console.log('body', req.body)
-    throw new ApiError(StatusCodes.BAD_REQUEST, 'Create user error')
+    // điều hướng dữ liệu sang tầng service
+    const createdUser = await userService.createNew(req.body)
 
     // có kết quả thì trả về client
-    // res.status(StatusCodes.CREATED).json({ message: 'Create user', code: StatusCodes.CREATED })
+    res.status(StatusCodes.CREATED).json(createdUser)
   } catch (err: any) {
     next(err)
   }
@@ -20,4 +21,3 @@ export const userController = {
 //req.query: query string
 //req.params: route params
 //req.body: request body
-// điều hướng dữ liệu sang tầng service
