@@ -1,3 +1,6 @@
+import { create } from 'domain'
+import { userModel } from '../models/userModel'
+
 const createNew = async (reqBody: any) => {
   try {
     // Xử lý logic dữ liệus
@@ -7,9 +10,13 @@ const createNew = async (reqBody: any) => {
     }
 
     // Gọi tới tầng model để xử lý lưu bản ghi vào DB
-    // Có thể bắn email, noti về admin khi 1 board mới được tạo
+    const createdUser = await userModel.createNew(newUser)
 
-    return newUser
+    // Lấy bản ghi sau khi gọi (tùy mục đích dự án có cần hay không)
+    const getNewUser = await userModel.findOneById(createdUser.insertedId)
+
+    return getNewUser
+    // Có thể bắn email, noti về admin khi 1 board mới được tạo
   } catch (err) {
     throw err
   }
