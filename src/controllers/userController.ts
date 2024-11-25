@@ -1,11 +1,10 @@
 import { StatusCodes } from 'http-status-codes'
-import ApiError from '../utils/ApiError'
 import { userService } from '../services/userService'
 
-const createNew = async (req: any, res: any, next: any) => {
+const createUser = async (req: any, res: any, next: any) => {
   try {
     // điều hướng dữ liệu sang tầng service
-    const createdUser = await userService.createNew(req.body)
+    const createdUser = await userService.createUser(req.body)
 
     // có kết quả thì trả về client
     res.status(StatusCodes.CREATED).json(createdUser)
@@ -14,8 +13,43 @@ const createNew = async (req: any, res: any, next: any) => {
   }
 }
 
+const loginUser = async (req: any, res: any, next: any) => {
+  try {
+    // điều hướng dữ liệu sang tầng service
+    const response = await userService.loginUser(req.body)
+    const { refresh_token, ...newResponse } = response
+    res.cookie('refresh_token', refresh_token, {
+      httpOnly: true,
+      secure: false,
+      sameSite: 'strict',
+      path: '/'
+    })
+
+    // có kết quả thì trả về client
+    res.status(StatusCodes.CREATED).json({ ...newResponse, refresh_token })
+  } catch (err: any) {
+    next(err)
+  }
+}
+
+const logoutUser = async (req: any, res: any) => {
+  try {
+    res.clearCookie('refresh_token')
+    return res.status(StatusCodes.OK).json({
+      status: 'OK',
+      message: 'Logout successfully'
+    })
+  } catch (e) {
+    return res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({
+      message: e
+    })
+  }
+}
+
 export const userController = {
-  createNew
+  createUser,
+  loginUser,
+  logoutUser
 }
 
 //req.query: query string

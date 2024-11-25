@@ -51,9 +51,18 @@ const findOneById = async (id: any) => {
   }
 }
 
+const findOneByEmail = async (email: any) => {
+  try {
+    return await GET_DB().collection(USER_COLLECTION_NAME).findOne({ email: email })
+  } catch (err: any) {
+    throw new Error(err)
+  }
+}
+
 export const userModel = {
   USER_COLLECTION_NAME,
   USER_COLLECTION_SCHEMA,
   findOneById,
+  findOneByEmail,
   createNew
 }

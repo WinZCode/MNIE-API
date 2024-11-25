@@ -7,6 +7,8 @@ interface EnvironmentVariables {
   APP_PORT?: string
   AUTHOR?: string
   BUILD_MODE?: string
+  ACCESS_TOKEN?: string
+  REFRESH_TOKEN?: string
 }
 
 export const env: EnvironmentVariables = {
@@ -15,5 +17,7 @@ export const env: EnvironmentVariables = {
   APP_HOST: process.env.APP_HOST,
   APP_PORT: process.env.APP_PORT,
   AUTHOR: process.env.AUTHOR,
-  BUILD_MODE: process.env.BUILD_MODE
+  BUILD_MODE: process.env.BUILD_MODE,
+  ACCESS_TOKEN: process.env.ACCESS_TOKEN,
+  REFRESH_TOKEN: process.env.REFRESH_TOKEN
 }
