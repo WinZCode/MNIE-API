@@ -11,6 +11,7 @@ import ApiError from '../utils/ApiError'
 
 const createNew = async (req: any, res: any, next: any) => {
   const correctCond = Joi.object({
+    email: Joi.string().email().lowercase().trim(),
     username: Joi.string().min(3).max(30).required().trim().strict().messages({
       'string.min': 'Username phải có ít nhất {#limit} ký tự',
       'string.max': 'Username không được vượt quá {#limit} ký tự',
