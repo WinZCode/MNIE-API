@@ -1,6 +1,7 @@
 import { userModel } from '../models/userModel'
 import { generalAccessToken, generalRefreshToken } from '../services/jwtService'
 import bcrypt from 'bcrypt'
+import { ObjectId } from 'mongodb'
 
 const createUser = async (reqBody: any) => {
   try {
@@ -69,11 +70,13 @@ const loginUser = async (reqBody: any) => {
 const getDetailsUser = (id: any) => {
   return new Promise(async (resolve, reject) => {
     try {
-      const user = await userModel.findOneById(id)
+      const objectId = ObjectId.isValid(id) ? new ObjectId(id) : null
+      const user = await userModel.findOneById(objectId)
+
       if (user === null) {
         resolve({
           status: 'ERR',
-          message: 'The user is not defined'
+          message: 'The user is not defined 222'
         })
       }
       resolve({
