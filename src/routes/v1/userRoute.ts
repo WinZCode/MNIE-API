@@ -14,4 +14,5 @@ Router.route('/sign-up')
 
 Router.route('/sign-in').post(userValidation.loginUser, userController.loginUser)
 Router.route('/log-out').post(userController.logoutUser)
+Router.route('/get-details/:id').get(userController.getDetailsUser)
 export const userRouter = Router

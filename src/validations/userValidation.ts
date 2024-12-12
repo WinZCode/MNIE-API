@@ -18,7 +18,6 @@ const createUser = async (req: any, res: any, next: any) => {
       'any.required': 'Username là trường bắt buộc',
       'string.empty': 'Username không được để trống'
     }),
-
     password: Joi.string()
       .min(6)
       .pattern(new RegExp('^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d)'))
@@ -30,8 +29,13 @@ const createUser = async (req: any, res: any, next: any) => {
         'string.pattern.base': 'Mật khẩu phải chứa ít nhất 1 chữ hoa, 1 chữ thường và 1 số',
         'any.required': 'Mật khẩu là trường bắt buộc',
         'string.empty': 'Mật khẩu không được để trống'
-      })
-  })
+      }),
+    confirmPassword: Joi.string().valid(Joi.ref('password')).required().messages({
+      'any.only': 'Xác nhận mật khẩu không khớp',
+      'any.required': 'Vui lòng xác nhận mật khẩu',
+      'string.empty': 'Xác nhận mật khẩu không được để trống'
+    })
+  }).with('password', 'confirmPassword')
 
   try {
     // kiểm tra điều kiện validate khi gửi req lên

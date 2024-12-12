@@ -4,11 +4,16 @@ import { CONNECT_DB, CLOSE_DB } from './config/mongodb'
 import { env } from './config/environment'
 import { APIs_V1 } from './routes/v1'
 import { errorHandlingMiddleware } from './middlewares/errorHandlingMiddleware'
+import cors from 'cors'
+import { corsOptions } from './config/cors'
 
 const START_SERVER = () => {
   const app = express()
   const port = Number(env.APP_PORT)
   const host = env.APP_HOST || 'localhost'
+
+  // cors
+  app.use(cors(corsOptions))
 
   // enable req.body json data
   app.use(express.json())

@@ -30,3 +30,29 @@ export const generalRefreshToken = async (payload: any) => {
 
   return refresh_token
 }
+
+// export const refreshTokenJwtService = (token: any) => {
+//   return new Promise((resolve, reject) => {
+//     try {
+//       jwt.verify(token, env.REFRESH_TOKEN, async (err, user) => {
+//         if (err) {
+//           resolve({
+//             status: 'ERR',
+//             message: 'Authentication requied'
+//           })
+//         }
+//         const access_token = await generalAccessToken({
+//           id: user?.id,
+//           isAdmin: user?.isAdmin
+//         })
+//         resolve({
+//           status: 'OK',
+//           message: 'SUCESS',
+//           access_token
+//         })
+//       })
+//     } catch (e) {
+//       reject(e)
+//     }
+//   })
+// }

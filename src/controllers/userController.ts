@@ -1,5 +1,6 @@
 import { StatusCodes } from 'http-status-codes'
 import { userService } from '../services/userService'
+import { env } from '../config/environment'
 
 const createUser = async (req: any, res: any, next: any) => {
   try {
@@ -18,6 +19,7 @@ const loginUser = async (req: any, res: any, next: any) => {
     // điều hướng dữ liệu sang tầng service
     const response = await userService.loginUser(req.body)
     const { refresh_token, ...newResponse } = response
+
     res.cookie('refresh_token', refresh_token, {
       httpOnly: true,
       secure: false,
@@ -46,10 +48,47 @@ const logoutUser = async (req: any, res: any) => {
   }
 }
 
+const getDetailsUser = async (req: any, res: any) => {
+  try {
+    const userId = req.params.id
+    if (!userId) {
+      return res.status(StatusCodes.OK).json({
+        status: 'ERR',
+        message: 'The userId is required'
+      })
+    }
+    const response = await userService.getDetailsUser(userId)
+    return res.status(StatusCodes.OK).json(response)
+  } catch (e) {
+    return res.status(StatusCodes.NOT_FOUND).json({
+      message: e
+    })
+  }
+}
+
+// const refreshToken = async (req: any, res: any) => {
+//   try {
+//     let token = req.headers.token.split(' ')[1]
+//     if (!token) {
+//       return res.status(StatusCodes.OK).json({
+//         status: 'ERR',
+//         message: 'The token is required'
+//       })
+//     }
+//     const response = await refreshTokenJwtService(token)
+//     return res.status(StatusCodes.OK).json(response)
+//   } catch (e) {
+//     return res.status(StatusCodes.NOT_FOUND).json({
+//       message: e
+//     })
+//   }
+// }
+
 export const userController = {
   createUser,
   loginUser,
-  logoutUser
+  logoutUser,
+  getDetailsUser
 }
 
 //req.query: query string

@@ -4,14 +4,17 @@ import bcrypt from 'bcrypt'
 
 const createUser = async (reqBody: any) => {
   try {
-    const existingUser = await userModel.findOneByEmail(reqBody.email)
+    // Loại bỏ confirmPassword trước khi xử lý
+    const { confirmPassword, ...userData } = reqBody
+
+    const existingUser = await userModel.findOneByEmail(userData.email)
     if (existingUser) {
       throw new Error('Email has been registered.')
     }
 
-    const hashPassword = bcrypt.hashSync(reqBody.password, 10)
+    const hashPassword = bcrypt.hashSync(userData.password, 10)
     const newUser = {
-      ...reqBody,
+      ...userData,
       password: hashPassword
     }
 
@@ -22,7 +25,6 @@ const createUser = async (reqBody: any) => {
     const getNewUser = await userModel.findOneById(createdUser.insertedId)
 
     return getNewUser
-    // Có thể bắn email, noti về admin khi 1 board mới được tạo
   } catch (err) {
     throw err
   }
@@ -50,18 +52,12 @@ const loginUser = async (reqBody: any) => {
     }
 
     // Tạo access token và refresh token
-    const access_token = await generalAccessToken({
-      id: existingUser.id,
-      email: existingUser.email
-    })
+    const access_token = await generalAccessToken(payload)
 
-    const refresh_token = await generalRefreshToken({
-      id: existingUser.id,
-      email: existingUser.email
-    })
+    const refresh_token = await generalRefreshToken(payload)
 
     return {
-      user: existingUser,
+      ...existingUser,
       access_token,
       refresh_token
     }
@@ -70,7 +66,29 @@ const loginUser = async (reqBody: any) => {
   }
 }
 
+const getDetailsUser = (id: any) => {
+  return new Promise(async (resolve, reject) => {
+    try {
+      const user = await userModel.findOneById(id)
+      if (user === null) {
+        resolve({
+          status: 'ERR',
+          message: 'The user is not defined'
+        })
+      }
+      resolve({
+        status: 'OK',
+        message: 'SUCCESS',
+        data: user
+      })
+    } catch (e) {
+      reject(e)
+    }
+  })
+}
+
 export const userService = {
   createUser,
-  loginUser
+  loginUser,
+  getDetailsUser
 }
